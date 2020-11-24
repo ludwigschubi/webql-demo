@@ -28,8 +28,16 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenRootTypes {
+  Email: { // root type
+    id?: string | null; // ID
+    'rdf#type'?: string | null; // String
+    'vcard#value'?: string | null; // String
+  }
   Person: { // root type
     'foaf#name'?: string | null; // String
+    id?: string | null; // ID
+    'vcard#hasEmail'?: NexusGenRootTypes['Email'] | null; // Email
+    'vcard#role'?: string | null; // String
   }
   Query: {};
 }
@@ -43,24 +51,45 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 }
 
 export interface NexusGenFieldTypes {
+  Email: { // field return type
+    id: string | null; // ID
+    'rdf#type': string | null; // String
+    'vcard#value': string | null; // String
+  }
   Person: { // field return type
     'foaf#name': string | null; // String
+    id: string | null; // ID
+    'vcard#hasEmail': NexusGenRootTypes['Email'] | null; // Email
+    'vcard#role': string | null; // String
   }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    person: NexusGenRootTypes['Person'] | null; // Person
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  Email: { // field return type name
+    id: 'ID'
+    'rdf#type': 'String'
+    'vcard#value': 'String'
+  }
   Person: { // field return type name
     'foaf#name': 'String'
+    id: 'ID'
+    'vcard#hasEmail': 'Email'
+    'vcard#role': 'String'
   }
   Query: { // field return type name
-    ok: 'Boolean'
+    person: 'Person'
   }
 }
 
 export interface NexusGenArgTypes {
+  Query: {
+    person: { // args
+      webId: string; // String!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
@@ -68,7 +97,7 @@ export interface NexusGenAbstractTypeMembers {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Person" | "Query";
+export type NexusGenObjectNames = "Email" | "Person" | "Query";
 
 export type NexusGenInputNames = never;
 

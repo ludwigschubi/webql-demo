@@ -1,3 +1,4 @@
+import { PersonQueries } from "./person.queries";
 import { PersonType } from "./person.type";
 
-export default [PersonType];
+export default [PersonType, PersonQueries];
