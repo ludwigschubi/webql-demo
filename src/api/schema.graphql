@@ -12,6 +12,10 @@ type Email {
   vcard#value: String
 }
 
+type Mutation {
+  updatePerson(data: UpdatePersonInput!, webId: String!): Person
+}
+
 type Person {
   """A person's name"""
   foaf#name: String
@@ -26,4 +30,10 @@ type Person {
 
 type Query {
   person(webId: String!): Person
+}
+
+input UpdatePersonInput {
+  email: String
+  name: String
+  role: String
 }

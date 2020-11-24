@@ -1,12 +1,13 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { ButtonPrimary, Text } from "@primer/components";
+import { ButtonPrimary, Text, ButtonDanger } from "@primer/components";
+import auth from "solid-auth-client";
 
-import { useGqlQuery } from "../../api/schema";
-import { ProfileSection } from "./ProfileSection";
+import { useGqlMutation, useGqlQuery } from "../../api/schema";
+import { FormSection } from "./FormSection";
 import styles from "./Profile.module.css";
 
-function Profile() {
+export const Profile: React.FC<{ webId: string }> = ({ webId }) => {
   const result = useGqlQuery(
     `
   query getPerson($webId: String!) {
@@ -20,8 +21,16 @@ function Profile() {
     }
   }
   `,
-    { webId: "https://lalatest.solidcommunity.net/profile/card#me" }
+    { webId }
   );
+
+  const [updateProfile] = useGqlMutation(`
+  mutation updateProfile($data: UpdatePersonInput!, $webId: String!) {
+    updatePerson(data: $data, webId: $webId) {
+      id
+    }
+  }
+  `);
 
   const { error, data } = result;
 
@@ -35,41 +44,60 @@ function Profile() {
 
   return (
     <>
-      <Text fontSize="2em" marginBottom="16px">Hello {name}</Text>
+      <Text fontSize="2em" marginBottom="16px">
+        Hello {name}
+      </Text>
       <Formik
-        initialValues={{ name, role, email: hasEmail.value }}
-        onSubmit={(data) => {
-          console.log(data);
+        initialValues={{
+          name,
+          role,
+          email: hasEmail.value.replace("mailto:", ""),
+        }}
+        onSubmit={async (data) => {
+          const result = await updateProfile({ variables: { data, webId } });
+          console.log(result);
         }}
       >
-        {({ values, handleChange }) => (
+        {({ values, handleChange, dirty }) => (
           <Form>
-            <ProfileSection
+            <FormSection
               label="Name"
               name="name"
               defaultValue={values.name}
               onChange={handleChange}
             />
-            <ProfileSection
+            <FormSection
               label="Job / Role"
               name="role"
               defaultValue={values.role}
               onChange={handleChange}
             />
-            <ProfileSection
+            <FormSection
               label="Email"
               name="hasEmail"
               defaultValue={values.email}
               onChange={handleChange}
             />
-            <ButtonPrimary className={styles.submit} name="submit">
-              Submit
-            </ButtonPrimary>
+            <div className={styles.buttons}>
+              <ButtonDanger
+                marginRight="8px"
+                onClick={() => {
+                  auth.logout().then(() => {
+                    window.location.reload();
+                  });
+                }}
+              >
+                Logout
+              </ButtonDanger>
+              <ButtonPrimary disabled={!dirty} name="submit">
+                Submit
+              </ButtonPrimary>
+            </div>
           </Form>
         )}
       </Formik>
     </>
   );
-}
+};
 
 export default Profile;

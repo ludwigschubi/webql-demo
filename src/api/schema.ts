@@ -1,5 +1,5 @@
 import { join } from "path";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { graphql } from "webql-js";
 import { makeSchema } from "webql-nexus-schema";
 import types from "./objects";
@@ -36,4 +36,26 @@ export const useGqlQuery = (
     data: queryResult.data?.data,
     error: queryResult.data?.errors && queryResult.data?.errors[0],
   };
+};
+
+export const useGqlMutation = (
+  query: string,
+  callbacks?: {
+    onSuccess: (data: any) => void;
+    onError: (error: any) => void;
+  }
+) => {
+  const { onError, onSuccess } = callbacks ?? {};
+  const mutation = useMutation<any, unknown, any, any>(
+    ({ variables }) => {
+      const result = graphql({
+        schema: schema,
+        source: query,
+        variableValues: variables,
+      });
+      return result;
+    },
+    { onSuccess, onError }
+  );
+  return mutation;
 };

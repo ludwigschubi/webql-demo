@@ -14,6 +14,11 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  UpdatePersonInput: { // input type
+    email?: string | null; // String
+    name?: string | null; // String
+    role?: string | null; // String
+  }
 }
 
 export interface NexusGenEnums {
@@ -33,6 +38,7 @@ export interface NexusGenRootTypes {
     'rdf#type'?: string | null; // String
     'vcard#value'?: string | null; // String
   }
+  Mutation: {};
   Person: { // root type
     'foaf#name'?: string | null; // String
     id?: string | null; // ID
@@ -43,6 +49,7 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  UpdatePersonInput: NexusGenInputs['UpdatePersonInput'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
   Float: NexusGenScalars['Float'];
@@ -55,6 +62,9 @@ export interface NexusGenFieldTypes {
     id: string | null; // ID
     'rdf#type': string | null; // String
     'vcard#value': string | null; // String
+  }
+  Mutation: { // field return type
+    updatePerson: NexusGenRootTypes['Person'] | null; // Person
   }
   Person: { // field return type
     'foaf#name': string | null; // String
@@ -73,6 +83,9 @@ export interface NexusGenFieldTypeNames {
     'rdf#type': 'String'
     'vcard#value': 'String'
   }
+  Mutation: { // field return type name
+    updatePerson: 'Person'
+  }
   Person: { // field return type name
     'foaf#name': 'String'
     id: 'ID'
@@ -85,6 +98,12 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    updatePerson: { // args
+      data: NexusGenInputs['UpdatePersonInput']; // UpdatePersonInput!
+      webId: string; // String!
+    }
+  }
   Query: {
     person: { // args
       webId: string; // String!
@@ -97,9 +116,9 @@ export interface NexusGenAbstractTypeMembers {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Email" | "Person" | "Query";
+export type NexusGenObjectNames = "Email" | "Mutation" | "Person" | "Query";
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = "UpdatePersonInput";
 
 export type NexusGenEnumNames = never;
 

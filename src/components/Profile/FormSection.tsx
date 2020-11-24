@@ -2,16 +2,18 @@ import React from "react";
 import { TextInput, Text } from "@primer/components";
 import styles from "./Profile.module.css";
 
-export interface ProfileSectionProps {
+export interface FormSectionProps {
   label: string;
   name: string;
   defaultValue: string | number;
   onChange: (e: React.ChangeEvent) => void;
+  placeholder?: string;
 }
 
-export const ProfileSection: React.FC<ProfileSectionProps> = ({
+export const FormSection: React.FC<FormSectionProps> = ({
   name,
   label,
+  placeholder,
   defaultValue,
   onChange,
 }) => {
@@ -22,7 +24,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
       </Text>
       <TextInput
         name={name}
-        placeholder={label}
+        placeholder={placeholder ?? label}
         defaultValue={defaultValue}
         onChange={onChange}
       />
