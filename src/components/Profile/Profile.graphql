@@ -1,0 +1,10 @@
+query getPerson($webId: String!) {
+    person(webId: $webId) {
+        id
+        foaf#name
+        vcard#role
+        vcard#hasEmail { 
+            vcard#value
+        }
+    }
+}

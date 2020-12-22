@@ -3,27 +3,12 @@ import { Formik, Form } from "formik";
 import { ButtonPrimary, Text, ButtonDanger } from "@primer/components";
 import auth from "solid-auth-client";
 
-import { useGqlMutation, useGqlQuery } from "../../api/schema";
+import { useGqlMutation } from "../../api/schema";
 import { FormSection } from "./FormSection";
 import styles from "./Profile.module.css";
+import { useGetPersonQuery } from "../../graphql";
 
 export const Profile: React.FC<{ webId: string }> = ({ webId }) => {
-  const result = useGqlQuery(
-    `
-  query getPerson($webId: String!) {
-    person(webId: $webId) {
-      id
-      foaf#name
-      vcard#role
-      vcard#hasEmail { 
-        vcard#value
-      }
-    }
-  }
-  `,
-    { webId }
-  );
-
   const [updateProfile] = useGqlMutation(`
   mutation updateProfile($data: UpdatePersonInput!, $webId: String!) {
     updatePerson(data: $data, webId: $webId) {
@@ -32,10 +17,12 @@ export const Profile: React.FC<{ webId: string }> = ({ webId }) => {
   }
   `);
 
-  const { error, data } = result;
+  const { data, error } = useGetPersonQuery({ variables: { webId } });
+
+  console.debug(data, error)
 
   if (error) {
-    return <div>{error.message as string}</div>;
+    return <div>{error as string}</div>;
   } else if (!data || !data.person) {
     return <div>Loading...</div>;
   }
@@ -49,9 +36,9 @@ export const Profile: React.FC<{ webId: string }> = ({ webId }) => {
       </Text>
       <Formik
         initialValues={{
-          name,
-          role,
-          email: hasEmail.value.replace("mailto:", ""),
+          name: name ?? '',
+          role: role ?? '',
+          email: hasEmail?.value?.replace("mailto:", "") ?? '',
         }}
         onSubmit={async (data) => {
           const result = await updateProfile({ variables: { data, webId } });

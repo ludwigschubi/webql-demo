@@ -1,0 +1,13 @@
+overwrite: true
+schema: ./src/api/schema.graphql
+documents:
+  - "src/components/**/*.graphql"
+generates:
+  src/graphql.tsx:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-webql
+    config:
+      webqlSchemaImportFrom: "./api/schema"
+      webqlClientHooksImportFrom: "webql-hooks"

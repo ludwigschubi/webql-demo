@@ -23,7 +23,6 @@ export const PersonMutations = extendType({
         console.log(data, webId)
         const graph = new Graphs(webId);
         const { name, email, role } = data;
-        await graph.load();
         const profile = await graph.patch({
           [webId]: {
             "foaf#name": name,

@@ -1,6 +1,6 @@
 import { join } from "path";
 import { useMutation, useQuery } from "react-query";
-import { graphql } from "webql-js";
+import { graphql } from "graphql";
 import { makeSchema } from "webql-nexus-schema";
 import types from "./objects";
 
@@ -21,14 +21,12 @@ export const useGqlQuery = (
 ) => {
   const queryResult = useQuery({
     queryKey: dataKey,
-    queryFn: () => {
-      const result = graphql({
+    queryFn: () =>
+      graphql({
         schema: schema,
         source: query,
         variableValues: args,
-      });
-      return result;
-    },
+      }),
     config: { staleTime: "Infinity" },
   }) as { data: { data: any; errors: any[] } };
   return {

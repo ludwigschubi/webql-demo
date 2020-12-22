@@ -6,55 +6,58 @@ import auth from "solid-auth-client";
 import styles from "./App.module.css";
 import Profile from "./components/Profile";
 import { FormSection } from "./components/Profile/FormSection";
+import { ClientProvider } from "./graphql";
 
 function App() {
   const [loggedInWebId, setLoggedInWebId] = useState("");
   useEffect(() => {
     auth.currentSession().then((session) => {
-      console.debug(session)
+      console.debug(session);
       if (session && session.webId) {
         setLoggedInWebId(session.webId);
       } else {
-        setLoggedInWebId("")
+        setLoggedInWebId("");
       }
     });
   }, []);
   return (
-    <div className={styles.main}>
-      <BaseStyles>
-        {!!loggedInWebId ? (
-          <Profile webId={loggedInWebId} />
-        ) : (
-          <>
-            <Formik
-              initialValues={{ webId: "" }}
-              onSubmit={(values) => {
-                const { webId } = values;
-                if (webId) {
-                  const webIdObject = new URL(webId);
-                  auth.login(webIdObject.protocol + webIdObject.host);
-                }
-              }}
-            >
-              {({ values, handleChange }) => (
-                <Form>
-                  <FormSection
-                    label="Enter your WebId or Identity Provider url to login"
-                    placeholder="WebId or Identity Provider url"
-                    name="webId"
-                    defaultValue={values.webId}
-                    onChange={handleChange}
-                  />
-                  <Button name="submit" className={styles.login}>
-                    Login
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </>
-        )}
-      </BaseStyles>
-    </div>
+    <ClientProvider>
+      <div className={styles.main}>
+        <BaseStyles>
+          {!!loggedInWebId ? (
+            <Profile webId={loggedInWebId} />
+          ) : (
+            <>
+              <Formik
+                initialValues={{ webId: "" }}
+                onSubmit={(values) => {
+                  const { webId } = values;
+                  if (webId) {
+                    const webIdObject = new URL(webId);
+                    auth.login(webIdObject.protocol + webIdObject.host);
+                  }
+                }}
+              >
+                {({ values, handleChange }) => (
+                  <Form>
+                    <FormSection
+                      label="Enter your WebId or Identity Provider url to login"
+                      placeholder="WebId or Identity Provider url"
+                      name="webId"
+                      defaultValue={values.webId}
+                      onChange={handleChange}
+                    />
+                    <Button name="submit" className={styles.login}>
+                      Login
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </>
+          )}
+        </BaseStyles>
+      </div>
+    </ClientProvider>
   );
 }
 
